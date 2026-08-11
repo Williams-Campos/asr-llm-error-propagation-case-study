@@ -1,0 +1,11 @@
+.DS_Store
+
+# Vendored upstream dependency (clone/build separately, see README.md)
+whisper.cpp/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

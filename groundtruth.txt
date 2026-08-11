@@ -1,0 +1,3 @@
+test1.wav,"En tiempos de engaño universal, decir la verdad se convierte en un acto revolucionario"
+test2.wav,"Detesto lo que dices, pero defendería hasta la muerte tu derecho a decirlo"
+test3.wav,"Si la libertad significa algo, es el derecho a decirles a los demás lo que no quieren oír"
