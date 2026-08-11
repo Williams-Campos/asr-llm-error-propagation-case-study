@@ -45,12 +45,60 @@ Esto deja el binario en `whisper.cpp/build/bin/whisper-cli` y el modelo en
 `whisper.cpp/models/ggml-base.bin`, que es lo que esperan las rutas por defecto de
 `asr_pipeline.jl`.
 
-Para el experimento de cuantización (ver rúbrica), genera variantes cuantizadas con la
-herramienta `quantize` incluida en whisper.cpp:
+### Descargar modelos
+
+`models/download-ggml-model.sh` descarga modelos ggml precompilados desde Hugging Face a
+`whisper.cpp/models/`. Ejecuta el script sin argumentos para ver el listado completo de tamaños
+disponibles:
 
 ```bash
-./whisper.cpp/build/bin/quantize whisper.cpp/models/ggml-base.bin whisper.cpp/models/ggml-base-q5_0.bin q5_0
+cd whisper.cpp
+./models/download-ggml-model.sh
 ```
+
+Tamaños principales: `tiny`, `base`, `small`, `medium`, `large-v1`, `large-v2`, `large-v3`,
+`large-v3-turbo`. Cada uno tiene variante `.en` (solo inglés) y, para varios tamaños, hay
+versiones **ya cuantizadas** publicadas directamente (sufijo `-q5_0`, `-q5_1` o `-q8_0`), por
+ejemplo:
+
+```bash
+./models/download-ggml-model.sh base            # fp16, línea base
+./models/download-ggml-model.sh base-q5_1        # cuantizado Q5_1, precompilado
+./models/download-ggml-model.sh base-q8_0        # cuantizado Q8_0, precompilado
+```
+
+Cada descarga queda en `whisper.cpp/models/ggml-<modelo>.bin`.
+
+### Cuantizar modelos manualmente
+
+Para generar tus propias variantes cuantizadas (necesario si quieres un tipo que no viene
+precompilado, como `Q4_0`, o comparar varios niveles bajo el mismo commit de whisper.cpp para el
+experimento de la rúbrica), usa el binario `whisper-quantize` que se compila junto con
+`whisper-cli`:
+
+```bash
+# uso: whisper-quantize <modelo-origen.bin> <modelo-destino.bin> <tipo>
+./whisper.cpp/build/bin/whisper-quantize \
+  whisper.cpp/models/ggml-base.bin \
+  whisper.cpp/models/ggml-base-q5_0.bin \
+  q5_0
+```
+
+Tipos de cuantización soportados: `q2_k`, `q3_k`, `q4_0`, `q4_1`, `q4_k`, `q5_0`, `q5_1`,
+`q5_k`, `q6_k`, `q8_0`. Para replicar la comparación pedida en la rúbrica (`Q8_0`, `Q5_1`,
+`Q4_0`), genera las tres variantes a partir del mismo modelo fp16 base:
+
+```bash
+for t in q8_0 q5_1 q4_0; do
+  ./whisper.cpp/build/bin/whisper-quantize \
+    whisper.cpp/models/ggml-base.bin \
+    whisper.cpp/models/ggml-base-$t.bin \
+    $t
+done
+```
+
+Luego corre `asr_pipeline.jl` una vez por cada `.bin` (original + cuantizados) para comparar
+WER/CER/RTF entre niveles de cuantización.
 
 ## Ejecutar el pipeline
 
