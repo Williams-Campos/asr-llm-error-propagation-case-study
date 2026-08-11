@@ -174,6 +174,8 @@ El corpus de audio debe ser de libre uso o de grabación propia con consentimien
   \item \textbf{Traducción y normalización del texto} con un modelo de lenguaje local servido mediante
   \textbf{Ollama} (\url{https://ollama.com}).
   \end{enumerate}&\\
+
+
   El equipo disponible no tiene memoria suficiente para ejecutar ambos modelos en precisión completa,
   por lo que se recurre a la \textbf{cuantización}: los pesos, originalmente almacenados en punto flotante
   IEEE-754 de 32 bits (\texttt{binary32}, con $p=24$ bits de mantisa y unidad de redondeo
@@ -187,27 +189,23 @@ El corpus de audio debe ser de libre uso o de grabación propia con consentimien
   \]
   \vspace{-14pt}&\\
   lo que introduce un error de representación $\varepsilon_i=\tilde{w}_i-w_i$ acotado por medio paso de
-  cuantización, $|\varepsilon_i|\le d/2$. Cada capa del modelo evalúa productos punto de longitud $n$
-  (típicamente $n\ge 512$). Bajo el modelo estándar de aritmética de punto flotante,
-  $\mathrm{fl}(a\circ b)=(a\circ b)(1+\delta)$ con $|\delta|\le u$, el error acumulado de un producto punto
-  satisface la cota clásica&\\
-  \vspace{-4pt}
-  \[
-  \left|\mathrm{fl}\!\left(\sum_{i=1}^{n} a_i b_i\right)-\sum_{i=1}^{n} a_i b_i\right|
-  \;\le\; \gamma_n \sum_{i=1}^{n}|a_i||b_i|,
-  \qquad \gamma_n=\frac{nu}{1-nu},
-  \]
-  \vspace{-14pt}&\\
-  a lo que se suma el error de cuantización de los propios coeficientes. Estos errores no permanecen
-  aislados: se propagan a través de decenas de capas, atraviesan operaciones sensibles como
-  \texttt{softmax} y \texttt{logsumexp} (donde puede aparecer \textit{cancelación catastrófica} al restar
-  cantidades cercanas), y luego se realimentan en la \textbf{decodificación autorregresiva}, en la que cada
-  token generado condiciona a los siguientes. Finalmente, la salida de la etapa 1 es la entrada de la
-  etapa 2, por lo que la cascada compone dos operadores y, en primera aproximación, sus números de
-  condición se multiplican, $\kappa_{\text{total}} \approx \kappa_{\text{LLM}}\cdot\kappa_{\text{ASR}}$.&\\
-  Un detalle adicional relevante: la suma en punto flotante \textbf{no es asociativa}, por lo que cambiar el
-  número de hilos de ejecución (\texttt{-t} en \texttt{whisper.cpp}) altera el orden de las reducciones y puede
-  producir salidas distintas para la misma entrada y el mismo modelo.&\\
+  cuantización, $|\varepsilon_i|\le d/2$. 
+  
+  &\\
+   Una versión preliminar del caso, con instrucciones de instalación y ejecución de los modelos, se encuentra en el repositorio de GitHub:
+  \url{https://github.com/shernandez-ucm/estudio_casos_asr}
+  &\\\hline
+\end{longtable}
+
+\newpage
+\noindent
+\begin{longtable}{|p{\textwidth}|@{}c@{}}
+  \hline
+  \centering\cellcolor{cyan}\textbf{\color{white}DESCRIPCIÓN DEL CASO Y DE LAS PREGUNTAS O REQUERIMIENTOS A SER RESUELTOS}&\\\hline
+  \endhead
+  El centro de salud le solicita a su equipo un informe técnico que responda: \textit{¿cuánta precisión
+  numérica se puede sacrificar antes de que la traducción deje de ser clínicamente confiable?}
+   &\\
   Para que el equipo pueda cuantificar, y no solo describir, el efecto de estos errores numéricos sobre la
   calidad del resultado final, se emplean tres métricas estándar de evaluación: la \textbf{Tasa de Error de
   Palabra} (\textit{Word Error Rate}, \textbf{WER}) y la \textbf{Tasa de Error de Carácter} (\textit{Character
@@ -217,15 +215,17 @@ El corpus de audio debe ser de libre uso o de grabación propia con consentimien
   que evalúa la calidad de la traducción producida por el modelo servido en Ollama mediante la coincidencia de
   \textit{n}-gramas con una o más traducciones de referencia. Estas métricas permiten trazar, para cada formato
   de cuantización, una curva de degradación de la calidad y así identificar el punto en que el error numérico
-  deja de ser despreciable desde el punto de vista clínico.&\\
-  El centro de salud le solicita a su equipo un informe técnico que responda: \textit{¿cuánta precisión
-  numérica se puede sacrificar antes de que la traducción deje de ser clínicamente confiable?}&\\
+  deja de ser despreciable desde el punto de vista clínico.
   &\\
-  \textbf{REQUERIMIENTOS:}
+  &\\
+
+  &\\\hline
+    \textbf{REQUERIMIENTOS:}
   \vspace{3pt}
   Cada grupo (2 a 3 integrantes) debe diseñar y ejecutar un experimento numérico que cuantifique el
   efecto de la cuantización y la propagación del error en la cascada ASR $\to$ LLM, y comunicar sus
-  resultados en un informe y una presentación.&\\&\\\hline
+  resultados en un informe y una presentación
+  &\\&\\\hline
 \end{longtable}
 
 \newpage
