@@ -1,0 +1,16 @@
+field,value
+timestamp,"2026-08-19T17:38:18"
+language,en
+threads,4
+beam_size,5
+best_of,5
+temperature,0.0
+temperature_increment,0.0
+temperature_fallback,disabled (-nf)
+gpu,CLI default: enabled
+whisper_commit,592feef04a1802b18cbeffd0fd0eb5d02570c2ec
+julia_version,1.12.6
+os,Darwin
+cpu_threads,4
+repetitions,5
+audio_count,10

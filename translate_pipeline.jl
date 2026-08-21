@@ -5,10 +5,10 @@
 # por el ASR: ambas traducciones pasan por el mismo LLM, la única diferencia es
 # si el texto de entrada es la transcripción de referencia o la salida de whisper-cli.
 
-const OUT_DIR     = joinpath(@__DIR__, "out")
+const OUT_DIR = joinpath(@__DIR__, "out")
 const GROUNDTRUTH = joinpath(@__DIR__, "groundtruth.txt")
 const RESULTS_DIR = joinpath(@__DIR__, "translations")
-const OLLAMA_URL  = "http://geoespacial.ucm.cl:11434/api/generate"
+const OLLAMA_URL = "http://localhost:11434/api/generate"
 
 function usage_and_exit()
     println(stderr, "uso: julia translate_pipeline.jl <modelo_ollama> <idioma_objetivo>")
@@ -52,7 +52,7 @@ function json_escape(s::AbstractString)
 end
 
 const JSON_ESCAPES = Dict('n' => '\n', 't' => '\t', 'r' => '\r',
-                          '"' => '"', '\\' => '\\', '/' => '/')
+    '"' => '"', '\\' => '\\', '/' => '/')
 
 function json_extract_string(json::AbstractString, key::String)
     marker = "\"$key\":\""
@@ -86,15 +86,15 @@ end
 
 function translate(text::AbstractString, model::String, target_lang::String)
     prompt = "Translate the following text into $target_lang. Output ONLY " *
-              "the translated text, with no explanations, quotation marks, " *
-              "or additional commentary.\n\nText: $text"
+             "the translated text, with no explanations, quotation marks, " *
+             "or additional commentary.\n\nText: $text"
 
     payload = """{"model":"$(json_escape(model))","prompt":"$(json_escape(prompt))",""" *
               """"stream":false,"think":false,"options":{"temperature":0}}"""
 
     cmd = Cmd(["curl", "-s", "-X", "POST", OLLAMA_URL,
-               "-H", "Content-Type: application/json",
-               "--data-binary", "@-"])
+        "-H", "Content-Type: application/json",
+        "--data-binary", "@-"])
 
     out = IOBuffer()
     run(pipeline(cmd; stdin=IOBuffer(payload), stdout=out))
@@ -110,7 +110,7 @@ end
 function char_ngrams(s::AbstractString, n::Int)
     chars = collect(s)
     counts = Dict{String,Int}()
-    for i in 1:(length(chars) - n + 1)
+    for i in 1:(length(chars)-n+1)
         g = String(chars[i:i+n-1])
         counts[g] = get(counts, g, 0) + 1
     end
@@ -118,7 +118,7 @@ function char_ngrams(s::AbstractString, n::Int)
 end
 
 function chrf(reference::AbstractString, hypothesis::AbstractString;
-              max_n::Int=6, beta::Float64=2.0)
+    max_n::Int=6, beta::Float64=2.0)
     precisions = Float64[]
     recalls = Float64[]
     for n in 1:max_n

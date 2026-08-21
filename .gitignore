@@ -1,7 +1,9 @@
 .DS_Store
+__pycache__/
 
-# Vendored upstream dependency (clone/build separately, see README.md)
+# Vendored upstream dependencies (clone/build separately, see README.md)
 whisper.cpp/
+whisper/
 
 # LaTeX build artifacts
 *.aux

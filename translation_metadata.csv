@@ -1,0 +1,17 @@
+field,value
+timestamp,2026-08-20T18:26:41
+experiment,R2_translation
+llm_model,gemma3:1b-it-q8_0
+llm_quantization,Q8_0
+temperature,0.0
+seed,42
+target_language,Spanish
+asr_repetition,1
+audio_count,10
+asr_models,"F32,F16,Q8_0,Q5_1,Q4_0"
+reference_file,groundtruth_es.txt
+metric,chrF
+chrf_max_n,6
+chrf_beta,2
+julia_version,1.12.6
+os,Darwin

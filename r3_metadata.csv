@@ -1,0 +1,20 @@
+field,value
+timestamp,2026-08-20T18:41:34
+experiment,R3_error_propagation
+llm_1_model,gemma3:1b-it-q8_0
+llm_1_quantization,Q8_0
+llm_2_model,gemma3:1b
+llm_2_quantization,Q4_K_M
+temperature,0.0
+seed,42
+target_language,Spanish
+asr_repetition,1
+audio_count,10
+conditions,"REFERENCE,F32,Q8_0,Q5_1,Q4_0"
+reference_es_file,groundtruth_es.txt
+metric,chrF
+chrf_max_n,6
+chrf_beta,2
+warmup,one unmeasured request per LLM
+julia_version,1.12.6
+os,Darwin

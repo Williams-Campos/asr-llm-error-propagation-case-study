@@ -1,0 +1,284 @@
+============================================================
+REPRESENTACIÓN NUMÉRICA POR MODELO
+============================================================
+
+Modelo base:
+Whisper Base
+
+------------------------------------------------------------
+F32
+------------------------------------------------------------
+
+Archivo:
+ggml-base-f32.bin
+
+Representación:
+IEEE-754 binary32
+
+Bits efectivos por peso:
+32,0 bits/peso
+
+Tamaño aproximado:
+291 MB
+
+Precisión del significando:
+p = 24 bits
+
+Unidad de redondeo:
+u = 2^(-24)
+  ≈ 5,96046 × 10^(-8)
+
+No utiliza cuantización entera por bloques.
+
+Paso de cuantización d:
+No aplica.
+
+
+------------------------------------------------------------
+F16
+------------------------------------------------------------
+
+Archivo:
+ggml-base-f16.bin
+
+Representación:
+IEEE-754 binary16
+
+Bits efectivos por peso:
+16,0 bits/peso
+
+Tamaño aproximado:
+148 MB
+
+Precisión del significando:
+p = 11 bits
+
+Unidad de redondeo:
+u = 2^(-11)
+  ≈ 4,88281 × 10^(-4)
+
+No utiliza los bloques de cuantización entera Q8/Q5/Q4.
+
+Paso de cuantización d:
+No aplica.
+
+
+------------------------------------------------------------
+Q8_0
+------------------------------------------------------------
+
+Archivo:
+ggml-base-q8_0.bin
+
+Tamaño:
+81,77 MB
+
+Tamaño de bloque:
+32 pesos
+
+Estructura de bloque:
+- escala d: FP16 = 16 bits
+- 32 valores cuantizados: 8 bits cada uno
+
+Costo del bloque:
+
+16 + (32 × 8)
+= 272 bits
+
+Bits efectivos por peso:
+
+272 / 32
+= 8,5 bits/peso
+
+Número de bloques cuantizados:
+2.206.096
+
+Número de pesos cuantizados:
+70.595.072
+
+Reconstrucción:
+
+w_tilde_i = d × q_i
+
+q_i entero de 8 bits.
+
+Estadísticas del paso d:
+
+d_min:
+1,48416 × 10^(-5)
+
+d_media:
+4,93215 × 10^(-4)
+
+d_mediana:
+4,50134 × 10^(-4)
+
+d_max:
+7,67517 × 10^(-3)
+
+Valor representativo utilizado en tablas:
+mediana(d) = 4,50134 × 10^(-4)
+
+Cota ideal de cuantización:
+
+|epsilon_i| <= d/2
+
+La verificación experimental de esta cota se realizará
+comparando los pesos reconstruidos con los pesos F32.
+
+
+------------------------------------------------------------
+Q5_1
+------------------------------------------------------------
+
+Archivo:
+ggml-base-q5_1.bin
+
+Tamaño:
+59,71 MB
+
+Tamaño de bloque:
+32 pesos
+
+Estructura de bloque:
+- escala d: FP16 = 16 bits
+- desplazamiento m: FP16 = 16 bits
+- información cuantizada: 5 bits por peso
+
+Costo del bloque:
+
+16 + 16 + (32 × 5)
+= 192 bits
+
+Bits efectivos por peso:
+
+192 / 32
+= 6,0 bits/peso
+
+Número de bloques cuantizados:
+2.206.096
+
+Número de pesos cuantizados:
+70.595.072
+
+Reconstrucción:
+
+w_tilde_i = d × q_i + m
+
+Estadísticas de d:
+
+d_min:
+1,10507 × 10^(-4)
+
+d_media:
+3,12060 × 10^(-3)
+
+d_mediana:
+2,89917 × 10^(-3)
+
+d_max:
+3,35388 × 10^(-2)
+
+Valor representativo utilizado en tablas:
+mediana(d) = 2,89917 × 10^(-3)
+
+Estadísticas del desplazamiento m:
+
+m_min:
+-9,74609 × 10^(-1)
+
+m_media:
+-3,99697 × 10^(-2)
+
+m_mediana:
+-3,89404 × 10^(-2)
+
+m_max:
+1,42593 × 10^(-2)
+
+Cota ideal:
+
+|epsilon_i| <= d/2
+
+La verificación experimental se realizará frente al modelo F32.
+
+
+------------------------------------------------------------
+Q4_0
+------------------------------------------------------------
+
+Archivo:
+ggml-base-q4_0.bin
+
+Tamaño:
+46,47 MB
+
+Tamaño de bloque:
+32 pesos
+
+Estructura:
+- escala d: FP16 = 16 bits
+- 32 valores cuantizados: 4 bits cada uno
+
+Costo:
+
+16 + (32 × 4)
+= 144 bits
+
+Bits efectivos por peso:
+
+144 / 32
+= 4,5 bits/peso
+
+Número de bloques cuantizados:
+2.206.096
+
+Número de pesos cuantizados:
+70.595.072
+
+Reconstrucción:
+
+w_tilde_i = d × q_i
+
+En este formato el factor almacenado d puede presentar signo.
+Para describir el espaciado de la rejilla de cuantización se usa:
+
+Delta = |d|
+
+Estadísticas de Delta:
+
+Delta_min:
+2,35558 × 10^(-4)
+
+Delta_media:
+7,82981 × 10^(-3)
+
+Delta_mediana:
+7,14493 × 10^(-3)
+
+Delta_max:
+1,21826 × 10^(-1)
+
+Valor representativo utilizado en tablas:
+
+mediana(|d|)
+= 7,14493 × 10^(-3)
+
+Cota ideal expresada mediante el paso positivo:
+
+|epsilon_i| <= Delta/2
+
+La verificación experimental se realizará frente al modelo F32.
+
+
+============================================================
+RESUMEN
+============================================================
+
+Formato    Bits efectivos/peso    d representativo
+
+F32        32,0                   N/A
+F16        16,0                   N/A
+Q8_0        8,5                   4,50134e-04
+Q5_1        6,0                   2,89917e-03
+Q4_0        4,5                   7,14493e-03

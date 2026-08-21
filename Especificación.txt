@@ -1,0 +1,285 @@
+============================================================
+ESPECIFICACIÓN DEL ENTORNO EXPERIMENTAL
+============================================================
+
+-- HARDWARE --
+
+Equipo:
+MacBook Air (M1, 2020)
+
+Procesador:
+Apple M1
+
+CPU:
+8 núcleos
+- 4 núcleos de rendimiento
+- 4 núcleos de eficiencia
+
+Memoria:
+8 GB de memoria unificada
+
+Almacenamiento:
+SSD de 256 GB
+
+GPU:
+GPU integrada Apple M1 de 7 núcleos
+(no se utilizó GPU dedicada)
+
+Sistema operativo:
+macOS Tahoe 26.5.2
+
+
+-- SOFTWARE --
+
+Julia:
+1.12.6
+
+whisper.cpp:
+Versión: v1.9.2
+Commit:
+592feef04a1802b18cbeffd0fd0eb5d02570c2ec
+
+Ollama:
+Versión: 0.32.2
+
+
+============================================================
+WHISPER.CPP
+============================================================
+
+Modelo base:
+Whisper Base
+
+Formatos evaluados:
+
+ggml-base-f32.bin
+- Formato: F32
+- Bits efectivos por peso: 32,0
+- Tamaño aproximado: 291 MB
+
+ggml-base-f16.bin
+- Formato: F16
+- Bits efectivos por peso: 16,0
+- Tamaño aproximado: 148 MB
+
+ggml-base-q8_0.bin
+- Formato: Q8_0
+- Cuantización nominal: 8 bits
+- Bits efectivos por peso: 8,5
+- Tamaño: 81,77 MB
+
+ggml-base-q5_1.bin
+- Formato: Q5_1
+- Cuantización nominal: 5 bits
+- Bits efectivos por peso: 6,0
+- Tamaño: 59,71 MB
+
+ggml-base-q4_0.bin
+- Formato: Q4_0
+- Cuantización nominal: 4 bits
+- Bits efectivos por peso: 4,5
+- Tamaño: 46,47 MB
+
+
+-- PARÁMETROS EXPERIMENTALES DE DECODIFICACIÓN ASR --
+
+Idioma:
+English (en)
+
+Número de hilos:
+4
+
+Beam size:
+5
+
+Best-of:
+5
+
+Temperatura:
+0.0
+
+Incremento de temperatura:
+0.0
+
+Fallback de temperatura:
+Deshabilitado (-nf)
+
+GPU:
+Habilitada mediante el backend disponible de whisper.cpp
+en Apple Silicon (GPU integrada / Metal).
+
+Repeticiones por formato:
+5
+
+Número de audios:
+10
+
+Duración total del corpus:
+212,288 s
+
+Palabras de referencia:
+402
+
+Caracteres de referencia:
+2324
+
+Semilla:
+No se fijó una semilla explícita para whisper.cpp.
+El experimento se ejecutó con temperatura 0 y fallback
+deshabilitado para reducir fuentes de variabilidad.
+
+
+============================================================
+OLLAMA / GEMMA 3 1B
+============================================================
+
+Arquitectura:
+Gemma 3
+
+Número de parámetros:
+999,89 M
+
+Longitud de contexto:
+32768 tokens
+
+
+-- MODELO 1 --
+
+Tag:
+gemma3:1b-it-q8_0
+
+ID:
+0fdb9c7fefee
+
+Cuantización:
+Q8_0
+
+Tamaño aproximado:
+1,1 GB
+
+
+-- MODELO 2 --
+
+Tag:
+gemma3:1b
+
+ID:
+8648f39daa8f
+
+Cuantización:
+Q4_K_M
+
+Tamaño aproximado:
+815 MB
+
+
+-- PARÁMETROS DEL MODELO SEGÚN "ollama show" --
+
+Temperatura por defecto:
+1
+
+top_k:
+64
+
+top_p:
+0.95
+
+
+-- PARÁMETROS UTILIZADOS EN LOS EXPERIMENTOS R2/R3 --
+
+Temperatura:
+0.0
+
+Semilla:
+42
+
+top_k:
+64 (valor del modelo; no modificado)
+
+top_p:
+0.95 (valor del modelo; no modificado)
+
+Streaming:
+false
+
+
+R2:
+Se mantuvo fijo el modelo:
+gemma3:1b-it-q8_0 (Q8_0)
+
+Esto permite estudiar el efecto de cambiar exclusivamente
+el formato numérico de Whisper.
+
+R3:
+Se utilizaron ambas cuantizaciones del mismo Gemma 3 1B:
+
+- gemma3:1b-it-q8_0 -> Q8_0
+- gemma3:1b          -> Q4_K_M
+
+Para cada LLM se evaluaron:
+
+1. Transcripción de referencia -> LLM
+2. Whisper F32 -> LLM
+3. Whisper Q8_0 -> LLM
+4. Whisper Q5_1 -> LLM
+5. Whisper Q4_0 -> LLM
+
+Total R3:
+2 LLM × 5 condiciones × 10 audios = 100 traducciones.
+
+Antes de medir cada modelo de Ollama se realizó una inferencia
+de warm-up no incluida en los resultados de latencia.
+
+
+============================================================
+MEDICIÓN DE MEMORIA
+============================================================
+
+Herramienta:
+/usr/bin/time -l
+
+Métrica:
+Maximum Resident Set Size (RSS)
+
+Repeticiones:
+5 por formato Whisper
+
+Criterio reportado:
+máximo RSS observado entre las cinco ejecuciones.
+
+Resultados:
+
+F32:
+526,38 MiB
+
+F16:
+341,94 MiB
+
+Q8_0:
+255,70 MiB
+
+Q5_1:
+227,42 MiB
+
+Q4_0:
+208,91 MiB
+
+
+============================================================
+REFERENCIAS DEL CORPUS
+============================================================
+
+groundtruth.txt:
+Transcripciones inglesas de referencia.
+
+groundtruth_es.txt:
+Traducciones españolas de referencia.
+
+Número de segmentos:
+10
+
+Duración individual:
+15–30 s
+
+Duración total:
+212,288 s
