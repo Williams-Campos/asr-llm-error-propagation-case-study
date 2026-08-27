@@ -5,9 +5,10 @@
 # por el ASR: ambas traducciones pasan por el mismo LLM, la única diferencia es
 # si el texto de entrada es la transcripción de referencia o la salida de whisper-cli.
 
-const OUT_DIR = joinpath(@__DIR__, "out")
-const GROUNDTRUTH = joinpath(@__DIR__, "groundtruth.txt")
-const RESULTS_DIR = joinpath(@__DIR__, "translations")
+const PROJECT_ROOT = dirname(dirname(@__DIR__))
+const OUT_DIR = joinpath(PROJECT_ROOT, "output", "transcriptions")
+const GROUNDTRUTH = joinpath(PROJECT_ROOT, "data", "groundtruth.txt")
+const RESULTS_DIR = joinpath(PROJECT_ROOT, "output", "translations")
 const OLLAMA_URL = "http://localhost:11434/api/generate"
 
 function usage_and_exit()

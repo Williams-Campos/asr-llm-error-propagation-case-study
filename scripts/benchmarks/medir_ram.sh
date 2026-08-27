@@ -1,19 +1,24 @@
 #!/bin/bash
+# Medición de RAM (RSS) por formato de cuantización de Whisper.
+# Ejecutar desde la raíz del proyecto: bash scripts/benchmarks/medir_ram.sh
 
-AUDIO="audio/ingles.wav"
-WHISPER="./whisper.cpp/build/bin/whisper-cli"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+AUDIO="$PROJECT_ROOT/data/audio/audio01(dolor toracico).wav"
+WHISPER="$PROJECT_ROOT/whisper.cpp/build/bin/whisper-cli"
 
 MODELOS=(
-    "f32:whisper.cpp/models/ggml-base-f32.bin"
-    "f16:whisper.cpp/models/ggml-base-f16.bin"
-    "q8_0:whisper.cpp/models/ggml-base-q8_0.bin"
-    "q5_1:whisper.cpp/models/ggml-base-q5_1.bin"
-    "q4_0:whisper.cpp/models/ggml-base-q4_0.bin"
+    "f32:$PROJECT_ROOT/whisper.cpp/models/ggml-base-f32.bin"
+    "f16:$PROJECT_ROOT/whisper.cpp/models/ggml-base-f16.bin"
+    "q8_0:$PROJECT_ROOT/whisper.cpp/models/ggml-base-q8_0.bin"
+    "q5_1:$PROJECT_ROOT/whisper.cpp/models/ggml-base-q5_1.bin"
+    "q4_0:$PROJECT_ROOT/whisper.cpp/models/ggml-base-q4_0.bin"
 )
 
 REPETICIONES=5
 
-echo "modelo,repeticion,rss_bytes,rss_mib" > ram_resultados.csv
+echo "modelo,repeticion,rss_bytes,rss_mib" > "$PROJECT_ROOT/results/csv/ram_resultados.csv"
 
 for item in "${MODELOS[@]}"; do
 
@@ -48,7 +53,7 @@ for item in "${MODELOS[@]}"; do
 
         echo "Run $i: $rss bytes = $rss_mib MiB"
 
-        echo "$nombre,$i,$rss,$rss_mib" >> ram_resultados.csv
+        echo "$nombre,$i,$rss,$rss_mib" >> "$PROJECT_ROOT/results/csv/ram_resultados.csv"
 
         rm "$archivo_tmp"
     done
@@ -56,4 +61,4 @@ for item in "${MODELOS[@]}"; do
 done
 
 echo
-echo "Resultados guardados en ram_resultados.csv"
+echo "Resultados guardados en results/csv/ram_resultados.csv"

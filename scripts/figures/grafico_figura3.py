@@ -1,5 +1,10 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+FIGURES_DIR = os.path.join(PROJECT_ROOT, "results", "figures")
 
 
 # ============================================================
@@ -262,12 +267,12 @@ fig.tight_layout(
 # ============================================================
 
 fig.savefig(
-    "figura_3_propagacion_asr_llm.svg",
+    os.path.join(FIGURES_DIR, "figura_3_propagacion_asr_llm.svg"),
     bbox_inches="tight"
 )
 
 fig.savefig(
-    "figura_3_propagacion_asr_llm.png",
+    os.path.join(FIGURES_DIR, "figura_3_propagacion_asr_llm.png"),
     dpi=300,
     bbox_inches="tight"
 )

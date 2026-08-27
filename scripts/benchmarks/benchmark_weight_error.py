@@ -13,7 +13,7 @@ import numpy as np
 # CONFIGURACIÓN
 # ============================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODEL_DIR = os.path.join(BASE_DIR, "whisper.cpp", "models")
 
 MODELS = {
@@ -26,11 +26,13 @@ MODELS = {
 
 OUT_SUMMARY = os.path.join(
     BASE_DIR,
+    "results", "csv",
     "quantization_error_summary.csv"
 )
 
 OUT_TENSOR = os.path.join(
     BASE_DIR,
+    "results", "csv",
     "quantization_error_by_tensor.csv"
 )
 

@@ -13,7 +13,7 @@ import numpy as np
 # ============================================================
 
 BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
 
 MODEL_PATH = os.path.join(
@@ -30,6 +30,7 @@ TARGET_TENSOR = (
 
 OUT_FILE = os.path.join(
     BASE_DIR,
+    "results", "csv",
     "reduction_order_experiment.csv",
 )
 

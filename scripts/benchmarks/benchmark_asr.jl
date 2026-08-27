@@ -6,13 +6,13 @@ using Dates
 using Statistics
 using Printf
 
-const ROOT = @__DIR__
+const ROOT = dirname(dirname(@__DIR__))
 const CLI = joinpath(ROOT, "whisper.cpp", "build", "bin", "whisper-cli")
 const MODELS_DIR = joinpath(ROOT, "whisper.cpp", "models")
-const AUDIO_DIR = joinpath(ROOT, "audio")
-const GROUNDTRUTH = joinpath(ROOT, "groundtruth.txt")
-const OUT_DIR = joinpath(ROOT, "out", "asr")
-const RESULTS_DIR = joinpath(ROOT, "results")
+const AUDIO_DIR = joinpath(ROOT, "data", "audio")
+const GROUNDTRUTH = joinpath(ROOT, "data", "groundtruth.txt")
+const OUT_DIR = joinpath(ROOT, "output", "transcriptions")
+const RESULTS_DIR = joinpath(ROOT, "results", "csv")
 const LANGUAGE = "en"
 const THREADS, BEAM_SIZE, BEST_OF = 4, 5, 5
 const TEMPERATURE, TEMPERATURE_INCREMENT = 0.0, 0.0

@@ -13,7 +13,7 @@ import wave
 # CONFIGURACIÓN
 # ============================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 WHISPER_CLI = os.path.join(
     BASE_DIR,
@@ -46,6 +46,7 @@ AUDIOS = [
 
 AUDIO_DIR = os.path.join(
     BASE_DIR,
+    "data",
     "audio",
 )
 
@@ -62,17 +63,20 @@ LANGUAGE = "en"
 
 OUT_RAW = os.path.join(
     BASE_DIR,
+    "results", "csv",
     "thread_experiment.csv",
 )
 
 OUT_SUMMARY = os.path.join(
     BASE_DIR,
+    "results", "csv",
     "thread_summary.csv",
 )
 
 OUT_DIR = os.path.join(
     BASE_DIR,
-    "out_threads",
+    "output",
+    "threads",
 )
 
 

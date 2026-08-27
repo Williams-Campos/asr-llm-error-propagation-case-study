@@ -34,22 +34,22 @@ using Dates
 # CONFIGURACIÓN
 # ============================================================
 
-const BASE_DIR = @__DIR__
+const BASE_DIR = dirname(dirname(@__DIR__))
 
 const ASR_CSV =
-    joinpath(BASE_DIR, "asr_per_audio.csv")
+    joinpath(BASE_DIR, "results", "csv", "asr_per_audio.csv")
 
 const GROUNDTRUTH_ES =
-    joinpath(BASE_DIR, "groundtruth_es.txt")
+    joinpath(BASE_DIR, "data", "groundtruth_es.txt")
 
 const OUT_PER_AUDIO =
-    joinpath(BASE_DIR, "r3_per_audio.csv")
+    joinpath(BASE_DIR, "results", "csv", "r3_per_audio.csv")
 
 const OUT_SUMMARY =
-    joinpath(BASE_DIR, "r3_summary.csv")
+    joinpath(BASE_DIR, "results", "csv", "r3_summary.csv")
 
 const OUT_METADATA =
-    joinpath(BASE_DIR, "r3_metadata.csv")
+    joinpath(BASE_DIR, "results", "csv", "r3_metadata.csv")
 
 
 # ============================================================

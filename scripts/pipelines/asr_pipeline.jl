@@ -1,12 +1,13 @@
 #!/usr/bin/env julia
 # Pipeline ASR: transcribe con whisper-cli, lee resultados y calcula métricas WER/CER.
 
-const WHISPER_CLI = joinpath(@__DIR__, "whisper.cpp", "build", "bin", "whisper-cli")
+const PROJECT_ROOT = dirname(dirname(@__DIR__))
+const WHISPER_CLI = joinpath(PROJECT_ROOT, "whisper.cpp", "build", "bin", "whisper-cli")
 const LANGUAGE = "en"
-const AUDIO_DIR = joinpath(@__DIR__, "audio")
+const AUDIO_DIR = joinpath(PROJECT_ROOT, "data", "audio")
 const WAV_FILES = ["audio01(dolor toracico).wav", "audio02(alergia).wav", "audio03(accidente).wav", "audio04(dolor abdominal).wav", "audio05(diabetes).wav", "audio06(fiebre).wav", "audio07(respiracion).wav", "audio08(herida).wav", "audio09(mareo).wav", "audio10(dolor cabeza).wav"]
-const GROUNDTRUTH = joinpath(@__DIR__, "groundtruth.txt")
-const OUT_DIR = joinpath(@__DIR__, "out")
+const GROUNDTRUTH = joinpath(PROJECT_ROOT, "data", "groundtruth.txt")
+const OUT_DIR = joinpath(PROJECT_ROOT, "output", "transcriptions")
 
 function usage_and_exit()
     println(stderr, "uso: julia asr_pipeline.jl <ruta-al-modelo.bin>")

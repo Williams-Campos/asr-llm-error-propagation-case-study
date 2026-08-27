@@ -123,7 +123,7 @@ El corpus consta de **10 segmentos de audio** en inglés, cada uno de 15–30 se
 | 9 | `audio09(mareo).wav` | Mareo súbito |
 | 10 | `audio10(dolor cabeza).wav` | Dolor de cabeza severo |
 
-Las transcripciones de referencia en inglés se encuentran en `groundtruth.txt` y las traducciones de referencia en español en `groundtruth_es.txt`.
+Las transcripciones de referencia en inglés se encuentran en `data/groundtruth.txt` y las traducciones de referencia en español en `data/groundtruth_es.txt`.
 
 ---
 
@@ -131,63 +131,71 @@ Las transcripciones de referencia en inglés se encuentran en `groundtruth.txt` 
 
 ```
 .
-├── README.md                          # Este archivo
-├── PAUTA.md                           # Rúbrica de evaluación del estudio de caso
-├── Especificación.txt                 # Especificación completa del entorno experimental
-├── Especificación_por_modelo          # Representación numérica detallada por formato
-├── Resultados.xlsx                    # Tabla consolidada de resultados
+├── README.md                              # Este archivo
+├── .gitignore                             # Reglas de exclusión para Git
 │
-├── estudio_casos_unidad1-2.tex        # Informe LaTeX del estudio de caso
-├── estudio_casos_unidad1-2.pdf        # Informe compilado (PDF)
+├── docs/                                  # Documentación del proyecto
+│   ├── PAUTA.md                           # Rúbrica de evaluación del estudio de caso
+│   ├── especificacion_entorno.txt         # Especificación completa del entorno experimental
+│   ├── especificacion_modelos.txt         # Representación numérica detallada por formato
+│   └── informe/                           # Informe LaTeX
+│       ├── estudio_casos_unidad1-2.tex
+│       └── estudio_casos_unidad1-2.pdf
 │
-├── audio/                             # Corpus: 10 archivos WAV (inglés, 15-30s c/u)
-├── groundtruth.txt                    # Transcripciones de referencia (inglés)
-├── groundtruth_es.txt                 # Traducciones de referencia (español)
+├── data/                                  # Datos de entrada
+│   ├── audio/                             # Corpus: 10 archivos WAV (inglés, 15-30s c/u)
+│   ├── groundtruth.txt                    # Transcripciones de referencia (inglés)
+│   └── groundtruth_es.txt                 # Traducciones de referencia (español)
 │
-├── asr_pipeline.jl                    # Pipeline ASR básico (uso interactivo)
-├── translate_pipeline.jl              # Pipeline de traducción básico (uso interactivo)
+├── scripts/                               # Todos los scripts ejecutables
+│   ├── pipelines/                         # Pipelines interactivos
+│   │   ├── asr_pipeline.jl                # Pipeline ASR básico
+│   │   └── translate_pipeline.jl          # Pipeline de traducción básico
+│   ├── benchmarks/                        # Scripts de benchmarking
+│   │   ├── benchmark_asr.jl               # Benchmark R1/R2: ASR completo
+│   │   ├── benchmark_translate.jl         # Benchmark R2: traducción
+│   │   ├── benchmark_r3.jl               # Benchmark R3: propagación del error
+│   │   ├── benchmark_weight_error.py      # Benchmark R1: error de cuantización
+│   │   ├── benchmark_threads.py           # Benchmark R4: efecto de hilos
+│   │   ├── benchmark_reduction_order.py   # Benchmark R4: orden de reducción
+│   │   └── medir_ram.sh                   # Medición de RAM (RSS) por formato
+│   └── figures/                           # Generadores de figuras
+│       ├── grafico_figura1.py             # Figura 1: precisión vs. bits por peso
+│       ├── grafico_figura2.py             # Figura 2: error de representación
+│       └── grafico_figura3.py             # Figura 3: propagación del error ASR→LLM
 │
-├── benchmark_asr.jl                   # Benchmark R1/R2: ASR completo (5 formatos × 10 audios × 5 reps)
-├── benchmark_translate.jl             # Benchmark R2: traducción (5 formatos ASR → LLM fijo)
-├── benchmark_r3.jl                    # Benchmark R3: propagación del error en cascada
-├── benchmark_weight_error.py          # Benchmark R1: error de cuantización peso a peso
-├── benchmark_threads.py               # Benchmark R4: efecto del número de hilos
-├── benchmark_reduction_order.py       # Benchmark R4: efecto del orden de reducción
-├── medir_ram.sh                       # Script auxiliar: medición de RAM (RSS) por formato
+├── results/                               # Todos los resultados experimentales
+│   ├── csv/                               # Datos tabulares
+│   │   ├── asr_per_audio.csv              # WER, CER, RTF por audio/formato/repetición
+│   │   ├── asr_summary.csv               # Promedios del benchmark ASR
+│   │   ├── asr_metadata.csv              # Metadatos del experimento ASR
+│   │   ├── quantization_error_summary.csv # MAE, RMSE, error relativo por formato
+│   │   ├── quantization_error_by_tensor.csv # Error por tensor del modelo
+│   │   ├── translation_per_audio.csv      # chrF por audio y formato ASR (R2)
+│   │   ├── translation_summary.csv        # Promedios de traducción R2
+│   │   ├── translation_metadata.csv       # Parámetros del experimento R2
+│   │   ├── r3_per_audio.csv              # chrF por audio/LLM/condición (R3)
+│   │   ├── r3_summary.csv               # Promedios de propagación R3
+│   │   ├── r3_metadata.csv              # Parámetros del experimento R3
+│   │   ├── thread_experiment.csv         # RTF bruto por modelo/hilos/audio
+│   │   ├── thread_summary.csv            # Resumen del efecto de hilos
+│   │   ├── reduction_order_experiment.csv # Error por estrategia de reducción
+│   │   └── ram_resultados.csv            # RSS por formato y repetición
+│   ├── figures/                           # Figuras generadas (PNG y SVG)
+│   │   ├── figura_1_precision_bits.*
+│   │   ├── figura_2_error_representacion.*
+│   │   └── figura_3_propagacion_asr_llm.*
+│   └── Resultados.xlsx                    # Tabla consolidada de resultados
 │
-├── grafico_figura1.py                 # Generador de Figura 1: precisión vs. bits por peso
-├── grafico_figura2.py                 # Generador de Figura 2: error de representación (MAE)
-├── grafico_figura3.py                 # Generador de Figura 3: propagación del error ASR→LLM
+├── output/                                # Salidas crudas de ejecución
+│   ├── transcriptions/                    # Transcripciones ASR por formato y repetición
+│   │   └── {F32,F16,Q8_0,Q5_1,Q4_0}/run_XX/
+│   ├── translations/                      # Traducciones LLM (_hyp.txt y _ref.txt)
+│   │   └── {F32,F16,Q8_0,Q5_1,Q4_0}/run_XX/
+│   └── threads/                           # Transcripciones del experimento de hilos
 │
-├── figura_1_precision_bits.{png,svg}  # Figura 1 generada
-├── figura_2_error_representacion.{png,svg}  # Figura 2 generada
-├── figura_3_propagacion_asr_llm.{png,svg}   # Figura 3 generada
-│
-├── asr_per_audio.csv                  # Resultados brutos ASR por audio/formato/repetición
-├── quantization_error_summary.csv     # Resumen de error de cuantización por formato
-├── quantization_error_by_tensor.csv   # Error de cuantización desglosado por tensor
-├── translation_per_audio.csv          # Resultados de traducción R2 por audio
-├── translation_summary.csv            # Resumen de traducción R2
-├── translation_metadata.csv           # Metadatos del experimento R2
-├── r3_per_audio.csv                   # Resultados de propagación R3 por audio
-├── r3_summary.csv                     # Resumen de propagación R3
-├── r3_metadata.csv                    # Metadatos del experimento R3
-├── thread_experiment.csv              # Resultados brutos del experimento de hilos
-├── thread_summary.csv                 # Resumen del experimento de hilos
-├── reduction_order_experiment.csv     # Resultados del experimento de orden de reducción
-├── ram_resultados.csv                 # Mediciones de RAM (RSS) por formato
-│
-├── results/                           # Resultados auxiliares del benchmark ASR
-│   ├── asr_metadata.csv
-│   └── asr_summary.csv
-├── out/                               # Transcripciones generadas por whisper-cli
-│   └── asr/{F32,F16,Q8_0,Q5_1,Q4_0}/run_XX/  # Organizadas por formato y repetición
-├── out_threads/                       # Transcripciones del experimento de hilos
-├── translations/                      # Traducciones generadas por Ollama
-│   └── asr/{F32,F16,Q8_0,Q5_1,Q4_0}/run_XX/  # Organizadas por formato y repetición
-│
-├── whisper.cpp/                       # (git-ignored) Clonar externamente
-└── whisper/                           # (git-ignored) OpenAI Whisper (para conversión F32)
+├── whisper.cpp/                           # (git-ignored) Clonar externamente
+└── whisper/                               # (git-ignored) OpenAI Whisper (para conversión F32)
 ```
 
 ---
@@ -267,35 +275,35 @@ ollama serve                     # Iniciar el servidor (si no está corriendo)
 
 ## Scripts de Pipeline
 
-### `asr_pipeline.jl` — Pipeline ASR básico
+### `scripts/pipelines/asr_pipeline.jl` — Pipeline ASR básico
 
-Pipeline interactivo de transcripción. Transcribe los 10 archivos WAV de `audio/` usando `whisper-cli` y calcula métricas contra `groundtruth.txt`.
+Pipeline interactivo de transcripción. Transcribe los 10 archivos WAV de `data/audio/` usando `whisper-cli` y calcula métricas contra `data/groundtruth.txt`.
 
 ```bash
-julia asr_pipeline.jl whisper.cpp/models/ggml-base-f32.bin
+julia scripts/pipelines/asr_pipeline.jl whisper.cpp/models/ggml-base-f32.bin
 ```
 
 **Métricas calculadas:** WER (Word Error Rate), CER (Character Error Rate), RTF (Real-Time Factor).  
-**Salida:** Transcripciones en `out/`, tabla de métricas por audio y promedio en la terminal.
+**Salida:** Transcripciones en `output/transcriptions/`, tabla de métricas por audio y promedio en la terminal.
 
-### `translate_pipeline.jl` — Pipeline de traducción básico
+### `scripts/pipelines/translate_pipeline.jl` — Pipeline de traducción básico
 
-Traduce las transcripciones de `out/` usando un LLM servido en Ollama y calcula chrF comparando contra la traducción de referencia generada por el mismo modelo.
+Traduce las transcripciones de `output/transcriptions/` usando un LLM servido en Ollama y calcula chrF comparando contra la traducción de referencia generada por el mismo modelo.
 
 ```bash
-julia translate_pipeline.jl gemma3:1b-it-q8_0 English
+julia scripts/pipelines/translate_pipeline.jl gemma3:1b-it-q8_0 English
 ```
 
 **Métricas calculadas:** chrF (Character F-score).  
-**Salida:** Traducciones en `translations/`, tabla de métricas en la terminal.
+**Salida:** Traducciones en `output/translations/`, tabla de métricas en la terminal.
 
-> **Nota:** `translate_pipeline.jl` debe ejecutarse **después** de `asr_pipeline.jl`, ya que lee las transcripciones desde `out/`.
+> **Nota:** `translate_pipeline.jl` debe ejecutarse **después** de `asr_pipeline.jl`, ya que lee las transcripciones desde `output/transcriptions/`.
 
 ---
 
 ## Benchmarks Experimentales
 
-### `benchmark_asr.jl` — Benchmark ASR (R1/R2)
+### `scripts/benchmarks/benchmark_asr.jl` — Benchmark ASR (R1/R2)
 
 **Propósito:** Ejecutar el experimento completo de transcripción con los 5 formatos de cuantización del modelo Whisper Base, midiendo el efecto de la precisión numérica sobre la calidad del ASR.
 
@@ -305,200 +313,127 @@ julia translate_pipeline.jl gemma3:1b-it-q8_0 English
 - 5 repeticiones por combinación
 - Total: 250 transcripciones
 
-**Parámetros fijos:**
-- Idioma: `en`
-- Hilos: 4
-- Beam size: 5
-- Best-of: 5
-- Temperatura: 0.0
-- Incremento de temperatura: 0.0
-- Fallback de temperatura: deshabilitado (`-nf`)
-
 ```bash
-julia benchmark_asr.jl          # 5 repeticiones (por defecto)
-julia benchmark_asr.jl 10       # 10 repeticiones
+julia scripts/benchmarks/benchmark_asr.jl          # 5 repeticiones (por defecto)
+julia scripts/benchmarks/benchmark_asr.jl 10       # 10 repeticiones
 ```
 
 **Salidas:**
-- `asr_per_audio.csv` — Resultados por audio/formato/repetición (WER, CER, RTF, texto)
-- `results/asr_summary.csv` — Promedios por formato
-- `results/asr_metadata.csv` — Metadatos del experimento
+- `results/csv/asr_per_audio.csv` — Resultados por audio/formato/repetición
+- `results/csv/asr_summary.csv` — Promedios por formato
+- `results/csv/asr_metadata.csv` — Metadatos del experimento
 
 ---
 
-### `benchmark_translate.jl` — Benchmark de traducción (R2)
+### `scripts/benchmarks/benchmark_translate.jl` — Benchmark de traducción (R2)
 
-**Propósito:** Medir el efecto de la cuantización del ASR sobre la calidad de la traducción, manteniendo el LLM fijo en `gemma3:1b-it-q8_0`. Esto aísla el error introducido específicamente por el ASR.
-
-**Diseño experimental:**
-- LLM fijo: `gemma3:1b-it-q8_0` (Q8_0)
-- 5 condiciones de entrada ASR: F32, F16, Q8_0, Q5_1, Q4_0
-- 10 audios del corpus
-- Traducción comparada contra `groundtruth_es.txt`
-- Temperatura LLM: 0.0, semilla: 42
+**Propósito:** Medir el efecto de la cuantización del ASR sobre la calidad de la traducción, manteniendo el LLM fijo en `gemma3:1b-it-q8_0`.
 
 ```bash
-julia benchmark_translate.jl
+julia scripts/benchmarks/benchmark_translate.jl
 ```
 
 **Salidas:**
-- `translation_per_audio.csv` — chrF por audio y formato ASR
-- `translation_summary.csv` — Promedios por formato
-- `translation_metadata.csv` — Parámetros del experimento
-- `translations/asr/*/` — Archivos de traducción (hipótesis `_hyp.txt` y referencia `_ref.txt`)
+- `results/csv/translation_per_audio.csv` — chrF por audio y formato ASR
+- `results/csv/translation_summary.csv` — Promedios por formato
+- `results/csv/translation_metadata.csv` — Parámetros del experimento
+- `output/translations/` — Archivos de traducción
 
 ---
 
-### `benchmark_r3.jl` — Propagación del error en cascada (R3)
+### `scripts/benchmarks/benchmark_r3.jl` — Propagación del error en cascada (R3)
 
-**Propósito:** Separar y cuantificar las fuentes de error en la cascada ASR → LLM. Se evalúan dos cuantizaciones del **mismo LLM** (Gemma 3 1B) para aislar el efecto numérico del modelo de lenguaje.
-
-**Diseño experimental — tres condiciones por LLM:**
-
-| Condición | Entrada | Mide |
-|---|---|---|
-| `llm_only` | Transcripción de referencia → LLM | Error del LLM aislado |
-| `asr_high_precision` | Salida ASR F32 → LLM | Error ASR alta precisión + LLM |
-| `asr_quantized` | Salida ASR cuantizado → LLM | Error compuesto (ASR + LLM) |
-
-**Combinaciones evaluadas:**
-- 2 LLM (Q8_0, Q4_K_M) × 5 condiciones (Referencia, F32, Q8_0, Q5_1, Q4_0) × 10 audios = **100 traducciones**
+**Propósito:** Separar y cuantificar las fuentes de error en la cascada ASR → LLM.
 
 ```bash
-julia benchmark_r3.jl
+julia scripts/benchmarks/benchmark_r3.jl
 ```
 
 **Salidas:**
-- `r3_per_audio.csv` — chrF por audio/LLM/condición
-- `r3_summary.csv` — Promedios por condición y modelo
-- `r3_metadata.csv` — Parámetros del experimento
+- `results/csv/r3_per_audio.csv` — chrF por audio/LLM/condición
+- `results/csv/r3_summary.csv` — Promedios por condición y modelo
+- `results/csv/r3_metadata.csv` — Parámetros del experimento
 
 ---
 
-### `benchmark_weight_error.py` — Error de cuantización peso a peso (R1)
+### `scripts/benchmarks/benchmark_weight_error.py` — Error de cuantización peso a peso (R1)
 
-**Propósito:** Medir el error de representación introducido por cada formato de cuantización, comparando directamente los pesos reconstruidos de cada modelo cuantizado contra los pesos originales en F32. Esto verifica experimentalmente la cota teórica de cuantización |εᵢ| ≤ d/2.
-
-**Metodología:**
-- Lee los tensores de cada archivo `.bin` en formato GGML legacy (Whisper)
-- Decodifica los bloques cuantizados (Q8_0, Q5_1, Q4_0) y los reconstruye a F32
-- Calcula: MAE, error mediano, error máximo, RMSE, error relativo, porcentaje de pesos dentro de la cota d/2
+**Propósito:** Medir el error de representación introducido por cada formato de cuantización, comparando directamente los pesos reconstruidos contra los pesos F32.
 
 ```bash
-python benchmark_weight_error.py
+python scripts/benchmarks/benchmark_weight_error.py
 ```
 
 **Salidas:**
-- `quantization_error_summary.csv` — Estadísticas globales de error por formato
-- `quantization_error_by_tensor.csv` — Error desglosado por cada tensor del modelo
+- `results/csv/quantization_error_summary.csv` — Estadísticas globales de error por formato
+- `results/csv/quantization_error_by_tensor.csv` — Error desglosado por tensor
 
 ---
 
-### `benchmark_threads.py` — Efecto del número de hilos (R4)
+### `scripts/benchmarks/benchmark_threads.py` — Efecto del número de hilos (R4)
 
-**Propósito:** Evaluar cómo el número de hilos de ejecución del CPU afecta la latencia y la estabilidad de las transcripciones de whisper.cpp. Evidencia el efecto del paralelismo sobre el resultado numérico.
-
-**Diseño experimental:**
-- 2 modelos: F32, Q4_0
-- 4 configuraciones de hilos: 1, 2, 4, 8
-- 3 audios seleccionados del corpus
-- 3 repeticiones por combinación
-- Compara si las transcripciones difieren al cambiar hilos
+**Propósito:** Evaluar cómo el número de hilos afecta la latencia y estabilidad de las transcripciones.
 
 ```bash
-python benchmark_threads.py
+python scripts/benchmarks/benchmark_threads.py
 ```
 
 **Salidas:**
-- `thread_experiment.csv` — Resultados brutos (RTF, tiempo, hash de transcripción)
-- `thread_summary.csv` — Resumen con RTF promedio y conteo de transcripciones diferentes
-- `out_threads/` — Transcripciones generadas por cada combinación
+- `results/csv/thread_experiment.csv` — RTF bruto por combinación
+- `results/csv/thread_summary.csv` — Resumen con RTF promedio
+- `output/threads/` — Transcripciones generadas
 
 ---
 
-### `benchmark_reduction_order.py` — Efecto del orden de reducción (R4)
+### `scripts/benchmarks/benchmark_reduction_order.py` — Efecto del orden de reducción (R4)
 
-**Propósito:** Demostrar que el orden en que se suman los pesos de un tensor afecta el resultado numérico debido a la aritmética de punto flotante. Se extrae un tensor específico del modelo F32 y se comparan distintas estrategias de suma.
-
-**Metodología:**
-- Tensor evaluado: `encoder.blocks.0.attn.query.weight`
-- Estrategias: suma secuencial, inversa, por magnitud ascendente/descendente, suma de Kahan, suma por pares, orden aleatorio
-- Compara cada resultado contra la suma de Kahan (referencia de alta precisión)
+**Propósito:** Demostrar que el orden de suma de los pesos afecta el resultado numérico.
 
 ```bash
-python benchmark_reduction_order.py
+python scripts/benchmarks/benchmark_reduction_order.py
 ```
 
 **Salida:**
-- `reduction_order_experiment.csv` — Resultado de cada estrategia, error absoluto y relativo respecto a Kahan
+- `results/csv/reduction_order_experiment.csv` — Resultado por estrategia de suma
 
 ---
 
-### `medir_ram.sh` — Medición de RAM por formato
+### `scripts/benchmarks/medir_ram.sh` — Medición de RAM por formato
 
-**Propósito:** Medir el consumo máximo de memoria (Maximum Resident Set Size) de whisper-cli para cada formato del modelo, usando `/usr/bin/time -l`.
+**Propósito:** Medir el consumo máximo de memoria (RSS) de whisper-cli para cada formato.
 
 ```bash
-bash medir_ram.sh
+bash scripts/benchmarks/medir_ram.sh
 ```
 
 **Salida:**
-- `ram_resultados.csv` — RSS en bytes y MiB por formato y repetición
-
-**Resultados observados:**
-
-| Formato | RSS máximo |
-|---|---|
-| F32 | 526,38 MiB |
-| F16 | 341,94 MiB |
-| Q8_0 | 255,70 MiB |
-| Q5_1 | 227,42 MiB |
-| Q4_0 | 208,91 MiB |
+- `results/csv/ram_resultados.csv` — RSS en bytes y MiB por formato y repetición
 
 ---
 
 ## Generación de Figuras
 
-Las tres figuras principales del informe se generan con scripts Python que usan `matplotlib`. Cada script produce versiones PNG y SVG:
-
-### `grafico_figura1.py` — Figura 1: Precisión vs. Bits por Peso
-
-Grafica la curva de **WER** (tasa de error de palabras) y **chrF** (calidad de traducción) en función de los bits efectivos por peso de cada formato de cuantización. Permite identificar visualmente el punto de quiebre donde la degradación crece de forma no lineal.
+Las tres figuras principales se generan con scripts Python en `scripts/figures/`. Cada script produce versiones PNG y SVG en `results/figures/`:
 
 ```bash
-python grafico_figura1.py
-# → figura_1_precision_bits.png, figura_1_precision_bits.svg
-```
-
-### `grafico_figura2.py` — Figura 2: Error de Representación
-
-Grafica el **error absoluto medio (MAE)** de los pesos reconstruidos respecto a los pesos F32 originales para cada formato cuantizado (F16, Q8_0, Q5_1, Q4_0). Muestra cómo el error de representación crece al reducir la precisión.
-
-```bash
-python grafico_figura2.py
-# → figura_2_error_representacion.png, figura_2_error_representacion.svg
-```
-
-### `grafico_figura3.py` — Figura 3: Propagación del Error en la Cascada ASR → LLM
-
-Grafica la **chrF** obtenida bajo cada condición experimental del R3, comparando los dos modelos LLM (Gemma Q8_0 vs. Gemma Q4_K_M). Visualiza cómo el error del ASR se propaga y amplifica al pasar por el LLM.
-
-```bash
-python grafico_figura3.py
-# → figura_3_propagacion_asr_llm.png, figura_3_propagacion_asr_llm.svg
+python scripts/figures/grafico_figura1.py   # → results/figures/figura_1_precision_bits.*
+python scripts/figures/grafico_figura2.py   # → results/figures/figura_2_error_representacion.*
+python scripts/figures/grafico_figura3.py   # → results/figures/figura_3_propagacion_asr_llm.*
 ```
 
 ---
 
 ## Resultados (archivos CSV)
 
+Todos los resultados tabulares se encuentran en `results/csv/`:
+
 | Archivo | Descripción |
 |---|---|
 | `asr_per_audio.csv` | WER, CER, RTF por audio, formato y repetición (250 filas) |
-| `results/asr_summary.csv` | Promedios del benchmark ASR por formato |
-| `results/asr_metadata.csv` | Metadatos del experimento ASR |
+| `asr_summary.csv` | Promedios del benchmark ASR por formato |
+| `asr_metadata.csv` | Metadatos del experimento ASR |
 | `quantization_error_summary.csv` | MAE, RMSE, error relativo, cota d/2 por formato |
-| `quantization_error_by_tensor.csv` | Error por tensor individual del modelo (~99 tensores) |
+| `quantization_error_by_tensor.csv` | Error por tensor individual del modelo |
 | `translation_per_audio.csv` | chrF por audio y formato ASR (benchmark R2) |
 | `translation_summary.csv` | Promedios de traducción R2 por formato |
 | `translation_metadata.csv` | Parámetros del experimento R2 |
@@ -514,23 +449,21 @@ python grafico_figura3.py
 
 ## Salidas de Ejecución
 
-Las transcripciones y traducciones generadas se almacenan organizadas por formato de cuantización y número de repetición:
+Las transcripciones y traducciones generadas se almacenan en `output/`:
 
 ```
-out/asr/{F32,F16,Q8_0,Q5_1,Q4_0}/run_{01..05}/
+output/transcriptions/{F32,F16,Q8_0,Q5_1,Q4_0}/run_{01..05}/
     audio01(dolor toracico).txt
-    audio02(alergia).txt
     ...
     audio10(dolor cabeza).txt
 
-translations/asr/{F32,F16,Q8_0,Q5_1,Q4_0}/run_{01..05}/
+output/translations/{F32,F16,Q8_0,Q5_1,Q4_0}/run_{01..05}/
     audio01(dolor toracico)_hyp.txt    # Traducción de la hipótesis ASR
     audio01(dolor toracico)_ref.txt    # Traducción de la referencia
     ...
 
-out_threads/
+output/threads/
     F32_audio01(dolor toracico)_t{1,2,4,8}_r{1,2,3}.txt
-    Q4_0_audio01(dolor toracico)_t{1,2,4,8}_r{1,2,3}.txt
     ...
 ```
 
@@ -582,4 +515,4 @@ Para reproducir los resultados de este estudio, se deben respetar los siguientes
 - **Gemma 3** — [Google DeepMind](https://ai.google.dev/gemma). Modelo de lenguaje servido mediante Ollama.
 - **Ollama** — [ollama.com](https://ollama.com), licencia MIT.
 
-Trabajo desarrollado para la asignatura **INF-321 Computación Numérica** de la carrera de Ingeniería Civil Informática, Universidad Católica del Maule. La rúbrica completa se encuentra en [`PAUTA.md`](PAUTA.md) y el enunciado original en [`estudio_casos_unidad1-2.pdf`](estudio_casos_unidad1-2.pdf).
+Trabajo desarrollado para la asignatura **INF-321 Computación Numérica** de la carrera de Ingeniería Civil Informática, Universidad Católica del Maule. La rúbrica completa se encuentra en [`docs/PAUTA.md`](docs/PAUTA.md) y el enunciado original en [`docs/informe/estudio_casos_unidad1-2.pdf`](docs/informe/estudio_casos_unidad1-2.pdf).
